@@ -1,16 +1,17 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
-
-// Meilleure pratique pour Next.js : éviter les connexions multiples
-const prisma = new PrismaClient();
+import { cookies } from 'next/headers';
+import { createToken } from '@/lib/auth';
 
 export async function POST(request) {
   try {
-    if (!request.body) {
-      return Response.json({ error: 'Données manquantes' }, { status: 400 });
+    const body = await request.json();
+    
+    if (!body || typeof body !== 'object') {
+      return Response.json({ error: 'Requête invalide' }, { status: 400 });
     }
 
-    const { pseudo, email, password } = await request.json();
+    const { pseudo, email, password, role } = body;
     
     // Validation des données
     if (!pseudo || !email || !password) {
@@ -44,22 +45,41 @@ export async function POST(request) {
     // Hashage du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    // Création de l'utilisateur selon le schéma actuel
+    // Création de l'utilisateur avec le rôle par défaut
     const user = await prisma.user.create({
       data: {
         pseudo,
         email,
         password: hashedPassword,
+        role: role || 'user', // Rôle par défaut si non spécifié
         created_at: new Date(),
       },
+      select: {
+        id: true,
+        pseudo: true,
+        email: true,
+        role: true,
+        avatar: true,
+        created_at: true
+      }
     });
 
-    // Ne pas renvoyer le mot de passe dans la réponse
-    const { password: _, ...userWithoutPassword } = user;
+    // Créer un token JWT pour la connexion automatique
+    const token = await createToken(user);
+
+    // Configurer le cookie avec le token
+    const cookieStore = cookies();
+    cookieStore.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 // 7 jours
+    });
 
     return Response.json({ 
-      message: 'Utilisateur créé avec succès',
-      user: userWithoutPassword 
+      message: 'Inscription réussie',
+      user: user
     }, { status: 201 });
 
   } catch (error) {
@@ -76,7 +96,6 @@ export async function POST(request) {
       error: 'Une erreur est survenue lors de l\'inscription' 
     }, { status: 500 });
   } finally {
-    // Fermeture de la connexion
     await prisma.$disconnect();
   }
-} 
+}

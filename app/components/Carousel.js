@@ -13,9 +13,9 @@ const Carousel = () => {
     },
    
     {
-      image: '/carousel/BO6.jpg',
-      title: 'Tounois Call of Duty Black Ops VI',
-      description: 'Dominez le champ de bataille – Rejoignez les tournois Call of Duty en ligne et montrez à tous qui est le véritable champion !'
+      image: '/carousel/Valo.jpg',
+      title: 'Tournoi Valorant',
+      description: 'Affrontez les meilleures équipes dans des duels tactiques intenses'
     },
 
     {

@@ -1,0 +1,168 @@
+SLAYERGATES - PLATEFORME DE TOURNOIS ESPORT
+==========================================
+
+PRÉSENTATION
+-----------
+SlayerGates est une plateforme web moderne dédiée à l'organisation et la gestion de tournois esport. Le projet utilise les dernières technologies web pour offrir une expérience utilisateur fluide et responsive.
+
+STACK TECHNIQUE
+--------------
+- Frontend : Next.js 15.1.6 avec React 19
+- Styling : Tailwind CSS 3.4
+- Base de données : PostgreSQL avec Prisma ORM
+- Authentification : JWT et bcrypt
+- Optimisation images : Sharp
+- Fonts : Geist et Geist Mono
+
+STRUCTURE DE LA BASE DE DONNÉES
+-----------------------------
+1. UTILISATEURS (User)
+   - Gestion des profils utilisateurs
+   - Authentification sécurisée
+   - Rôles (utilisateur/admin)
+   - Suivi des participations aux tournois
+   - Relations avec les équipes
+
+2. TOURNOIS (Tournament)
+   - Informations détaillées (titre, jeu, format)
+   - Gestion du nombre maximum de joueurs
+   - Support des tournois en ligne et physiques
+   - Système de dates (début/fin)
+   - Statut du tournoi
+
+3. ÉCOLES (School)
+   - Enregistrement des établissements
+   - Localisation (ville)
+   - Association avec les équipes
+
+4. ÉQUIPES (Team)
+   - Nom unique par école
+   - Gestion des capitaines
+   - Logo personnalisable (formats acceptés : JPG, JPEG, PNG, WEBP, max 2MB)
+   - Système de membres
+   - Participation aux tournois
+
+5. MATCHS (Match)
+   - Organisation par rounds
+   - Suivi des scores
+   - Gestion des horaires
+   - Système de statut
+
+SCHÉMA DE LA BASE DE DONNÉES
+========================================
+
+[User] {id, pseudo*, email*, password, avatar?, role}
+    |
+    |---> [Tournament] {id, title, game, description, format, max_players, is_online, location?, start_date, end_date?, status}
+    |     creator_id ---> User
+    |
+    |---> [Team] {id, name, logo?, created_at}
+    |     captain_id ---> User
+    |     school_id ---> School
+    |
+    |---> [TeamMember] {id, role, joined_at}
+    |     user_id ---> User
+    |     team_id ---> Team
+    |
+    +---> [TournamentParticipant] {id, status, seed?, created_at}
+          user_id ---> User
+          tournament_id ---> Tournament
+
+[School] {id, name*, city, created_at}
+    |
+    +---> [Team] {id, name, logo?, created_at}
+          school_id ---> School
+          captain_id ---> User
+
+[Match] {id, round, score?, status, scheduled_time?, completed_time?, created_at}
+    |   tournament_id ---> Tournament
+    |   player1_id ---> Int
+    |   player2_id ---> Int
+    |   winner_id? ---> Int
+    |
+    +---> [Tournament]
+
+[TournamentTeam] {tournament_id, team_id, registered_at}
+    tournament_id ---> Tournament
+    team_id ---> Team
+
+Légende :
+---------
+* : Unique
+? : Optionnel
+---> : Relation
+{} : Attributs
+[] : Table
+
+SYSTÈME DE CLASSEMENT
+-------------------
+- Classement global des équipes
+- Points basés sur les victoires (1 point par victoire)
+- Statistiques détaillées (victoires, défaites, ratio)
+- Mise à jour automatique après chaque match
+
+Contraintes :
+------------
+1. User:
+   - pseudo et email doivent être uniques
+   - role par défaut = "user"
+
+2. Tournament:
+   - status par défaut = "upcoming"
+   - is_online par défaut = true
+
+3. Team:
+   - nom unique par école (@@unique([name, school_id]))
+
+4. TournamentParticipant:
+   - un utilisateur ne peut participer qu'une fois (@@unique([tournament_id, user_id]))
+   - status par défaut = "registered"
+
+5. Match:
+   - status par défaut = "pending"
+
+6. TeamMember:
+   - un utilisateur ne peut être qu'une fois dans une équipe (@@unique([team_id, user_id]))
+   - role par défaut = "member"
+
+7. TournamentTeam:
+   - clé primaire composite (@@id([tournament_id, team_id]))
+
+FONCTIONNALITÉS PRINCIPALES
+--------------------------
+1. GESTION DES TOURNOIS
+   - Création et inscription (individuelle ou par équipe)
+   - Suivi des matchs en direct
+   - Brackets et progression
+   - Support multi-format
+
+2. SYSTÈME D'ÉQUIPES
+   - Création liée aux écoles
+   - Gestion des rôles (capitaine, membres)
+   - Historique des performances
+   - Participation aux tournois
+
+3. SYSTÈME SCOLAIRE
+   - Enregistrement des écoles
+   - Organisation géographique
+   - Suivi des équipes par établissement
+
+4. GESTION DES MATCHS
+   - Planification automatique
+   - Suivi des scores
+   - Historique des rencontres
+   - Système de classement
+
+5. INTERFACE ADMINISTRATIVE
+   - Gestion des utilisateurs et rôles
+   - Modération des tournois
+   - Supervision des équipes
+   - Analyse des données
+
+6. AUTHENTIFICATION ET SÉCURITÉ
+   - Inscription et connexion sécurisées
+   - Gestion des rôles et permissions
+   - Protection des données sensibles
+   - Validation des actions importantes
+
+Date de mise à jour : 13 mars 2025

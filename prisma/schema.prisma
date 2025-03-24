@@ -13,54 +13,41 @@ model User {
   pseudo              String                  @unique @db.VarChar(50)
   email               String                  @unique @db.VarChar(255)
   password            String                  @db.VarChar(255)
+  role                String                  @default("user") @db.VarChar(20)
   avatar              String?                 @db.VarChar(255)
   created_at          DateTime                @default(now())
   tournaments_created Tournament[]            @relation("TournamentCreator")
-  participations      TournamentParticipant[]
   teams_captain       Team[]                  @relation("TeamCaptain")
   team_memberships    TeamMember[]
-  role                String                  @default("user") // Peut être "user" ou "admin"
+  join_requests       TeamJoinRequest[]       @relation("UserRequests")
 }
 
 model Tournament {
-  id           Int                     @id @default(autoincrement())
-  title        String                  @db.VarChar(100)
-  game         String                  @db.VarChar(100)
-  description  String
-  format       String                  @db.VarChar(50)
-  max_players  Int
-  is_online    Boolean                 @default(true)
-  location     String?                 @db.VarChar(255)
-  start_date   DateTime
-  end_date     DateTime?
-  status       String                  @default("upcoming")
-  created_at   DateTime                @default(now())
-  creator_id   Int
-  matches      Match[]
-  creator      User                    @relation("TournamentCreator", fields: [creator_id], references: [id])
-  participants TournamentParticipant[]
-  teams        TournamentTeam[]
-}
-
-model TournamentParticipant {
-  id            Int        @id @default(autoincrement())
-  tournament_id Int
-  user_id       Int
-  status        String     @default("registered")
-  seed          Int?
-  created_at    DateTime   @default(now())
-  tournament    Tournament @relation(fields: [tournament_id], references: [id])
-  user          User       @relation(fields: [user_id], references: [id])
-
-  @@unique([tournament_id, user_id])
+  id               Int              @id @default(autoincrement())
+  title            String           @db.VarChar(100)
+  game             String           @db.VarChar(100)
+  description      String
+  format           String           @db.VarChar(50)
+  max_players      Int              // Nombre maximum d'équipes
+  players_per_team Int              // Nombre de joueurs par équipe
+  is_online        Boolean          @default(true)
+  location         String?          @db.VarChar(255)
+  start_date       DateTime
+  end_date         DateTime?
+  status           String           @default("upcoming")
+  created_at       DateTime         @default(now())
+  creator_id       Int
+  matches          Match[]
+  creator          User             @relation("TournamentCreator", fields: [creator_id], references: [id])
+  teams            TournamentTeam[]
 }
 
 model Match {
   id             Int        @id @default(autoincrement())
   tournament_id  Int
   round          Int
-  player1_id     Int
-  player2_id     Int
+  team1_id       Int
+  team2_id       Int
   winner_id      Int?
   score          String?    @db.VarChar(50)
   status         String     @default("pending")
@@ -68,6 +55,8 @@ model Match {
   completed_time DateTime?
   created_at     DateTime   @default(now())
   tournament     Tournament @relation(fields: [tournament_id], references: [id])
+  team1          Team      @relation("Team1Matches", fields: [team1_id], references: [id])
+  team2          Team      @relation("Team2Matches", fields: [team2_id], references: [id])
 }
 
 model School {
@@ -79,16 +68,21 @@ model School {
 }
 
 model Team {
-  id          Int      @id @default(autoincrement())
-  name        String
-  school_id   Int
-  captain_id  Int
-  logo        String?
-  created_at  DateTime @default(now())
-  school      School   @relation(fields: [school_id], references: [id])
-  captain     User     @relation("TeamCaptain", fields: [captain_id], references: [id])
-  members     TeamMember[]
-  tournaments TournamentTeam[]
+  id            Int               @id @default(autoincrement())
+  name          String
+  description   String?
+  school_id     Int
+  captain_id    Int
+  logo          String?
+  created_at    DateTime         @default(now())
+  school        School           @relation(fields: [school_id], references: [id])
+  captain       User             @relation("TeamCaptain", fields: [captain_id], references: [id])
+  members       TeamMember[]
+  tournaments   TournamentTeam[]
+  join_requests TeamJoinRequest[] @relation("TeamRequests")
+  team1_matches Match[]          @relation("Team1Matches")
+  team2_matches Match[]          @relation("Team2Matches")
+  leaderboard   Leaderboard?
 
   @@unique([name, school_id])
 }
@@ -108,9 +102,34 @@ model TeamMember {
 model TournamentTeam {
   tournament_id Int
   team_id      Int
-  registered_at DateTime @default(now())
-  tournament    Tournament @relation(fields: [tournament_id], references: [id])
-  team          Team       @relation(fields: [team_id], references: [id])
+  registered_at DateTime   @default(now())
+  participating_players Int[] // IDs des joueurs participants
+  tournament   Tournament @relation(fields: [tournament_id], references: [id])
+  team         Team       @relation(fields: [team_id], references: [id])
 
   @@id([tournament_id, team_id])
+}
+
+model TeamJoinRequest {
+  id         Int      @id @default(autoincrement())
+  team_id    Int
+  user_id    Int
+  status     String   @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  team       Team     @relation("TeamRequests", fields: [team_id], references: [id])
+  user       User     @relation("UserRequests", fields: [user_id], references: [id])
+
+  @@unique([team_id, user_id])
+}
+
+model Leaderboard {
+  id         Int      @id @default(autoincrement())
+  team_id    Int      @unique
+  points     Int      @default(0)
+  wins       Int      @default(0)
+  losses     Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  team       Team     @relation(fields: [team_id], references: [id])
 }

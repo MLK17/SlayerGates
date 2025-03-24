@@ -30,18 +30,6 @@ CREATE TABLE "Tournament" (
 );
 
 -- CreateTable
-CREATE TABLE "TournamentParticipant" (
-    "id" SERIAL NOT NULL,
-    "tournament_id" INTEGER NOT NULL,
-    "user_id" INTEGER NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'registered',
-    "seed" INTEGER,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "TournamentParticipant_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Match" (
     "id" SERIAL NOT NULL,
     "tournament_id" INTEGER NOT NULL,
@@ -64,18 +52,8 @@ CREATE UNIQUE INDEX "User_pseudo_key" ON "User"("pseudo");
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
--- CreateIndex
-CREATE UNIQUE INDEX "TournamentParticipant_tournament_id_user_id_key" ON "TournamentParticipant"("tournament_id", "user_id");
-
 -- AddForeignKey
 ALTER TABLE "Tournament" ADD CONSTRAINT "Tournament_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "TournamentParticipant" ADD CONSTRAINT "TournamentParticipant_tournament_id_fkey" FOREIGN KEY ("tournament_id") REFERENCES "Tournament"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "TournamentParticipant" ADD CONSTRAINT "TournamentParticipant_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Match" ADD CONSTRAINT "Match_tournament_id_fkey" FOREIGN KEY ("tournament_id") REFERENCES "Tournament"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
