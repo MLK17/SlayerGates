@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# SlayerGates - Plateforme de Tournois Esports
 
-## Getting Started
+SlayerGates est une plateforme web moderne dédiée à l'organisation et la gestion de tournois esports, inspirée du mode de jeu "Slayer Gates" de DOOM Eternal. Cette application permet aux utilisateurs de créer et gérer des équipes, participer à des tournois, et suivre leur progression via un système de classement dynamique.
 
-First, run the development server:
+## Fonctionnalités Principales
 
+- 🎮 Gestion complète des tournois esports
+- 🔐 Système d'authentification sécurisé
+- 👥 Gestion des équipes et des joueurs
+- 📊 Classements et statistiques en temps réel
+- 🏆 Suivi des matchs et résultats
+- 💫 Interface utilisateur moderne et responsive
+
+## Stack Technique
+
+- **Frontend**: Next.js, Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Base de données**: Prisma ORM
+- **Authentification**: JWT, bcrypt
+- **Styling**: Tailwind CSS
+
+## Prérequis
+
+- Node.js 18+ 
+- npm ou yarn
+- Une base de données PostgreSQL
+
+## Installation
+
+1. Clonez le repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/votre-username/slayergates.git
+cd slayergates
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Installez les dépendances
+```bash
+npm install
+# ou
+yarn install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+3. Configurez les variables d'environnement
+```bash
+cp .env.example .env
+```
+Remplissez les variables dans le fichier .env
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Initialisez la base de données
+```bash
+npx prisma migrate dev
+```
 
-## Learn More
+5. Lancez le serveur de développement
+```bash
+npm run dev
+# ou
+yarn dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+L'application sera accessible à l'adresse [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Structure du Projet
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+slayergates/
+├── app/               # Routes et composants Next.js
+├── components/        # Composants réutilisables
+├── prisma/           # Schéma et migrations de base de données
+├── public/           # Assets statiques
+└── styles/           # Styles globaux
+```
 
-## Deploy on Vercel
+## Déploiement
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Le moyen le plus simple de déployer l'application est d'utiliser la [Plateforme Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pour plus de détails sur le déploiement, consultez la [documentation de déploiement Next.js](https://nextjs.org/docs/app/building-your-application/deploying).
+
+## Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou soumettre une pull request.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
