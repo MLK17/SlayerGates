@@ -13,27 +13,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Ajouter un timestamp pour forcer le rechargement
-const version = Date.now();
-
 export const metadata = {
   title: 'SlayerGates',
   description: 'Plateforme de tournois esport',
   icons: {
     icon: [
-      { url: `/favicon_io/favicon-16x16.png?v=${version}`, sizes: '16x16', type: 'image/png' },
-      { url: `/favicon_io/favicon-32x32.png?v=${version}`, sizes: '32x32', type: 'image/png' }
+      { url: '/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon_io/favicon-32x32.png', sizes: '32x32', type: 'image/png' }
     ],
     apple: [
-      { url: `/favicon_io/apple-touch-icon.png?v=${version}`, sizes: '180x180', type: 'image/png' }
+      { url: '/favicon_io/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
     ],
     other: [
       {
         rel: 'mask-icon',
-        url: `/favicon_io/favicon.ico?v=${version}`
+        url: '/favicon_io/favicon.ico'
       },
-      { rel: 'android-chrome-192x192', url: `/favicon_io/android-chrome-192x192.png?v=${version}`, sizes: '192x192', type: 'image/png' },
-      { rel: 'android-chrome-512x512', url: `/favicon_io/android-chrome-512x512.png?v=${version}`, sizes: '512x512', type: 'image/png' },
+      { rel: 'android-chrome-192x192', url: '/favicon_io/android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
+      { rel: 'android-chrome-512x512', url: '/favicon_io/android-chrome-512x512.png', sizes: '512x512', type: 'image/png' },
     ],
   },
   manifest: '/favicon_io/site.webmanifest',
