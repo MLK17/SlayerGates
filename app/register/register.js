@@ -18,10 +18,30 @@ export default function Register() {
   const redirect = searchParams.get('redirect') || '/tournaments';
   const { register } = useAuth();
 
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (!minLength) return 'Le mot de passe doit contenir au moins 8 caractères';
+    if (!hasUpperCase) return 'Le mot de passe doit contenir au moins une majuscule';
+    if (!hasNumber) return 'Le mot de passe doit contenir au moins un chiffre';
+    if (!hasSpecialChar) return 'Le mot de passe doit contenir au moins un caractère spécial';
+    return '';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) {
+      setError(passwordError);
+      setLoading(false);
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Les mots de passe ne correspondent pas');
@@ -124,6 +144,15 @@ export default function Register() {
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                   disabled={loading}
                 />
+                <div className="mt-2 text-sm text-gray-600">
+                  <p className="font-medium mb-1">Le mot de passe doit contenir :</p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>Au moins 8 caractères</li>
+                    <li>Au moins une lettre majuscule</li>
+                    <li>Au moins un chiffre</li>
+                    <li>Au moins un caractère spécial (!@#$%^&*(),.?":{}|&lt;&gt;)</li>
+                  </ul>
+                </div>
               </div>
             </div>
 
