@@ -1,6 +1,6 @@
 # SlayerGates - Plateforme de Tournois Esports
 
-SlayerGates est une plateforme web moderne dédiée à l'organisation et la gestion de tournois esports, inspirée du mode de jeu "Slayer Gates" de DOOM Eternal. Cette application permet aux utilisateurs de créer et gérer des équipes, participer à des tournois, et suivre leur progression via un système de classement dynamique.
+SlayerGates est une plateforme web moderne dédiée à l'organisation et la gestion de tournois esport. Cette application permet aux utilisateurs de créer et gérer des équipes, participer à des tournois, et suivre leur progression via un système de classement dynamique.
 
 ## Fonctionnalités Principales
 
